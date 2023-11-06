@@ -2,8 +2,8 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes } from 'sequ
 import { CreationOptional } from 'sequelize'
 import { sequelize } from '../db.js'
 
-interface UserSchema extends Model<InferAttributes<UserSchema>, InferCreationAttributes<UserSchema>> {
-  id: CreationOptional<string>
+export interface UserSchema extends Model<InferAttributes<UserSchema>, InferCreationAttributes<UserSchema>> {
+  id: CreationOptional<number>
   email: string
   password: string
   isActivated: boolean
@@ -13,8 +13,9 @@ interface UserSchema extends Model<InferAttributes<UserSchema>, InferCreationAtt
 const UserModel = sequelize.define<UserSchema>('User', {
   // Model attributes are defined here
   id: {
+    type: DataTypes.INTEGER,
     primaryKey: true,
-    type: DataTypes.STRING,
+    autoIncrement: true,
   },
   email: {
     type: DataTypes.STRING,

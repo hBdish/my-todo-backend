@@ -2,7 +2,9 @@ import 'dotenv/config'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+// import * as models from './models/relationships-model.js'
 import { sequelize } from './db.js'
+import { router } from './router/index.js'
 
 const PORT = Number(process.env.PORT) || 5050
 const app = express()
@@ -10,15 +12,10 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
+app.use('/api/v1', router)
 
 const start = async () => {
   try {
-    try {
-      await sequelize.authenticate()
-      console.log('Connection has been established successfully.')
-    } catch (error) {
-      console.error('Unable to connect to the database:', error)
-    }
     app.listen(PORT, () => console.log(`server start on ${PORT} port`))
   } catch (e) {
     console.log(e)
@@ -27,6 +24,7 @@ const start = async () => {
   try {
     await sequelize.authenticate()
     await sequelize.sync()
+
     console.log('Connection has been established successfully.')
   } catch (error) {
     console.error('Unable to connect to the database:', error)

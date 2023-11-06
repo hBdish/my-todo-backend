@@ -44,13 +44,13 @@ class UserController {
   //   }
   // }
   //
-  // async activate(req, res, next) {
-  //   try {
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-  //
+  async activate(req: express.Request, res: express.Response<UserSchema[]>) {
+    try {
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   // async refresh(req: express.Request<string>, res: express.Response<string>) {
   //   try {
   //   } catch (e) {
@@ -58,7 +58,7 @@ class UserController {
   //   }
   // }
 
-  async getAllUsers(req: express.Request<string>, res: express.Response<UserSchema[]>) {
+  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>) {
     try {
       const user = await UserModel.findAll()
 

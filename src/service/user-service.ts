@@ -4,6 +4,7 @@ import * as uuid from 'uuid'
 import MailService from './mail-service.js'
 import TokenService from './token-service.js'
 import { UserDto } from '../dtos/user-dto.js'
+import { ApiError } from '../exceptions/api-error.js'
 
 class UserService {
   async registration(email: string, password: string) {
@@ -14,7 +15,7 @@ class UserService {
     })
 
     if (candidate) {
-      throw new Error(`Пользователь с таким email уже существует`)
+      throw ApiError.BadRequest(`Пользователь с таким email уже существует`)
     }
 
     const hashPassword = await bcrypt.hash(password, 3)
@@ -42,7 +43,7 @@ class UserService {
     })
 
     if (!user) {
-      throw new Error('Некорректная ссылка активации')
+      throw ApiError.BadRequest('Некорректная ссылка активации')
     }
 
     user.isActivated = true

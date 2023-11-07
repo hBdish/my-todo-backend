@@ -1,29 +1,20 @@
 import express from 'express'
-import * as core from 'express-serve-static-core'
 import { UserModel, UserSchema } from '../models/user-model.js'
 import UserService from '../service/user-service.js'
 import { UserDtoType } from '../dtos/user-dto.js'
-
-export interface RegistrationRequest extends express.Request {
-  body: {
-    email: string
-    password: string
-  }
-}
-
-export interface ActivateRequestParams extends core.ParamsDictionary {
-  link: string
-}
+import { ApiError } from '../exceptions/api-error.js'
+import { ActivateRequestParams, RegistrationRequest } from './types/user-controllers-types.js'
 
 class UserController {
   async registration(
     req: RegistrationRequest,
     res: express.Response<{ user: UserDtoType; accessToken: string; refreshToken: string }>,
+    next: (e: unknown) => void,
   ) {
     try {
       const { password, email } = req.body
       if (!password || !email) {
-        throw new Error('Не введен email или пароль')
+        throw ApiError.BadRequest('Не введен email или пароль')
       }
 
       const userData = await UserService.registration(email, password)
@@ -31,7 +22,7 @@ class UserController {
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
-      console.log(e)
+      next(e)
     }
   }
   //
@@ -49,14 +40,14 @@ class UserController {
   //   }
   // }
   //
-  async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>) {
+  async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>, next: (e: unknown) => void) {
     try {
       const activationLink = req.params.link
       await UserService.activate(activationLink)
 
       return res.redirect(`${process.env.CLIENT_URL}`)
     } catch (e) {
-      console.log(e)
+      next(e)
     }
   }
 
@@ -67,14 +58,14 @@ class UserController {
   //   }
   // }
 
-  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>) {
+  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>, next: (e: unknown) => void) {
     try {
       const user = await UserModel.findAll()
 
       if (!user) return
       res.json(user)
     } catch (e) {
-      console.log(e)
+      next(e)
     }
   }
 }

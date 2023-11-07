@@ -1,4 +1,5 @@
 import express from 'express'
+import * as core from 'express-serve-static-core'
 import { UserModel, UserSchema } from '../models/user-model.js'
 import UserService from '../service/user-service.js'
 import { UserDtoType } from '../dtos/user-dto.js'
@@ -8,6 +9,10 @@ export interface RegistrationRequest extends express.Request {
     email: string
     password: string
   }
+}
+
+export interface ActivateRequestParams extends core.ParamsDictionary {
+  link: string
 }
 
 class UserController {
@@ -44,8 +49,12 @@ class UserController {
   //   }
   // }
   //
-  async activate(req: express.Request, res: express.Response<UserSchema[]>) {
+  async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>) {
     try {
+      const activationLink = req.params.link
+      await UserService.activate(activationLink)
+
+      return res.redirect(`${process.env.CLIENT_URL}`)
     } catch (e) {
       console.log(e)
     }

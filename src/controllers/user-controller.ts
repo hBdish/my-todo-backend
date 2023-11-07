@@ -4,14 +4,23 @@ import UserService from '../service/user-service.js'
 import { UserDtoType } from '../dtos/user-dto.js'
 import { ApiError } from '../exceptions/api-error.js'
 import { ActivateRequestParams, RegistrationRequest } from './types/user-controllers-types.js'
+import { validationResult } from 'express-validator'
+
+import { ErrorNext } from '../middlewares/types/error-middleware-types.js'
 
 class UserController {
   async registration(
     req: RegistrationRequest,
     res: express.Response<{ user: UserDtoType; accessToken: string; refreshToken: string }>,
-    next: (e: unknown) => void,
+    next: ErrorNext,
   ) {
     try {
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest('Неправильно введен логин или пароль', errors.array()))
+      }
+
       const { password, email } = req.body
       if (!password || !email) {
         throw ApiError.BadRequest('Не введен email или пароль')
@@ -40,7 +49,7 @@ class UserController {
   //   }
   // }
   //
-  async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>, next: (e: unknown) => void) {
+  async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>, next: ErrorNext) {
     try {
       const activationLink = req.params.link
       await UserService.activate(activationLink)
@@ -58,7 +67,7 @@ class UserController {
   //   }
   // }
 
-  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>, next: (e: unknown) => void) {
+  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>, next: ErrorNext) {
     try {
       const user = await UserModel.findAll()
 

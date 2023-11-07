@@ -1,8 +1,10 @@
+import { ErrorApi, ErrorNext } from '../middlewares/types/error-middleware-types.js'
+
 class ApiError extends Error {
   status
   errors
 
-  constructor(status: number, message: string, errors: Error[] = []) {
+  constructor(status: number, message: string, errors: ErrorApi = []) {
     super(message)
     this.status = status
     this.errors = errors
@@ -12,7 +14,7 @@ class ApiError extends Error {
     return new ApiError(401, 'Пользователь не авторизован')
   }
 
-  static BadRequest(message: string, errors: Error[] = []) {
+  static BadRequest(message: string, errors: ErrorApi = []) {
     return new ApiError(400, message, errors)
   }
 }

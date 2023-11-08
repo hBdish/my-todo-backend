@@ -13,3 +13,9 @@ export interface LoginRequest extends RegistrationRequest {}
 export interface ActivateRequestParams extends core.ParamsDictionary {
   link: string
 }
+
+export interface LogoutRequest extends express.Request {
+  cookies: {
+    refreshToken: string
+  }
+}

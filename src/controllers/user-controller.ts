@@ -3,7 +3,12 @@ import { UserModel, UserSchema } from '../models/user-model.js'
 import UserService from '../service/user-service.js'
 import { UserDtoType } from '../dtos/user-dto.js'
 import { ApiError } from '../exceptions/api-error.js'
-import { ActivateRequestParams, LoginRequest, RegistrationRequest } from './types/user-controllers-types.js'
+import {
+  ActivateRequestParams,
+  LoginRequest,
+  LogoutRequest,
+  RegistrationRequest,
+} from './types/user-controllers-types.js'
 import { validationResult } from 'express-validator'
 
 import { ErrorNext } from '../middlewares/types/error-middleware-types.js'
@@ -50,13 +55,19 @@ class UserController {
     }
   }
 
-  // async logout(req, res, next) {
-  //   try {
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-  //
+  async logout(req: LogoutRequest, res: express.Response, next: ErrorNext) {
+    try {
+      const { refreshToken } = req.cookies
+      await UserService.logout(refreshToken)
+
+      res.clearCookie('refreshToken')
+
+      return res.json('succes')
+    } catch (e) {
+      next(e)
+    }
+  }
+
   async activate(req: express.Request<ActivateRequestParams>, res: express.Response<void>, next: ErrorNext) {
     try {
       const activationLink = req.params.link

@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { TokenModel } from '../models/relationships-model.js'
 import { UserDtoType } from '../dtos/user-dto.js'
-import { UserSchema } from '../models/user-model.js'
-import { where } from 'sequelize'
-import { sequelize } from '../db.js'
 
 class TokenService {
   generateTokens(payload: UserDtoType) {

@@ -5,6 +5,8 @@ import {
   GroupedAlternativeValidationError,
   UnknownFieldsError,
 } from 'express-validator'
+import express, { RequestHandler } from 'express'
+import { UserSchema } from '../../models/user-model.js'
 
 export type ErrorApi = (
   | Error
@@ -15,4 +17,4 @@ export type ErrorApi = (
   | FieldValidationError
 )[]
 
-export type ErrorNext = (e: unknown, errors?: ErrorApi) => void
+export type ErrorNext = (e?: unknown, errors?: ErrorApi) => void

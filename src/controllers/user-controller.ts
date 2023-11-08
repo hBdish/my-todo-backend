@@ -11,9 +11,7 @@ import {
   RegistrationRequest,
 } from './types/user-controllers-types.js'
 import { validationResult } from 'express-validator'
-
 import { ErrorNext } from '../middlewares/types/error-middleware-types.js'
-import { TokenModel } from '../models/token-model.js'
 
 class UserController {
   async registration(
@@ -97,11 +95,11 @@ class UserController {
     }
   }
 
-  async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>, next: ErrorNext) {
+  async getAllUsers(req: express.Request, res: express.Response<UserSchema[] | string>, next: ErrorNext) {
     try {
       const user = await UserModel.findAll()
 
-      if (!user) return
+      if (!user) return res.json(`users not find`)
       res.json(user)
     } catch (e) {
       next(e)

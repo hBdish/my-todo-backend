@@ -1,4 +1,4 @@
-import { TokenModel, UserModel } from '../models/relationships-model.js'
+import { UserModel } from '../models/relationships-model.js'
 import bcrypt from 'bcrypt'
 import * as uuid from 'uuid'
 import MailService from './mail-service.js'

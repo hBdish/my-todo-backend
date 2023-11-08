@@ -8,6 +8,8 @@ export interface RegistrationRequest extends express.Request {
   }
 }
 
+export interface LoginRequest extends RegistrationRequest {}
+
 export interface ActivateRequestParams extends core.ParamsDictionary {
   link: string
 }

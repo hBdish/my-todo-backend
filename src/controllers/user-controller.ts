@@ -3,7 +3,7 @@ import { UserModel, UserSchema } from '../models/user-model.js'
 import UserService from '../service/user-service.js'
 import { UserDtoType } from '../dtos/user-dto.js'
 import { ApiError } from '../exceptions/api-error.js'
-import { ActivateRequestParams, RegistrationRequest } from './types/user-controllers-types.js'
+import { ActivateRequestParams, LoginRequest, RegistrationRequest } from './types/user-controllers-types.js'
 import { validationResult } from 'express-validator'
 
 import { ErrorNext } from '../middlewares/types/error-middleware-types.js'
@@ -34,14 +34,22 @@ class UserController {
       next(e)
     }
   }
-  //
-  // async login(req, res, next) {
-  //   try {
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-  //
+
+  async login(
+    req: LoginRequest,
+    res: express.Response<{ user: UserDtoType; accessToken: string; refreshToken: string }>,
+    next: ErrorNext,
+  ) {
+    try {
+      const { password, email } = req.body
+      const userData = await UserService.login(email, password)
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+      return res.json(userData)
+    } catch (e) {
+      next(e)
+    }
+  }
+
   // async logout(req, res, next) {
   //   try {
   //   } catch (e) {

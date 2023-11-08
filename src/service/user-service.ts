@@ -35,6 +35,34 @@ class UserService {
     }
   }
 
+  async login(email: string, password: string) {
+    const candidate = await UserModel.findOne({
+      where: {
+        email,
+      },
+    })
+
+    if (!candidate) {
+      throw ApiError.BadRequest(`Пользователь с таким email не существует`)
+    }
+
+    const isPassEquals = await bcrypt.compare(password, candidate.password)
+
+    if (!isPassEquals) {
+      throw ApiError.BadRequest(`Неверный пароль`)
+    }
+
+    const userDto = new UserDto(candidate)
+    const tokens = TokenService.generateTokens({ ...userDto })
+
+    await TokenService.saveToken(candidate.id, tokens.refreshToken)
+
+    return {
+      ...tokens,
+      user: userDto,
+    }
+  }
+
   async activate(activationLink: string) {
     const user = await UserModel.findOne({
       where: {

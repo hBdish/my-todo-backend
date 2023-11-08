@@ -10,7 +10,7 @@ router.post(
   body('password').isLength({ min: 3, max: 32 }),
   userController.registration,
 )
-router.post('/login')
+router.post('/login', userController.login)
 router.post('/logout')
 router.get('/activate/:link', userController.activate)
 router.post('/refresh')

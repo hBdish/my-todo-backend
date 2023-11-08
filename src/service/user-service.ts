@@ -1,10 +1,12 @@
-import { UserModel } from '../models/relationships-model.js'
+import { TokenModel, UserModel } from '../models/relationships-model.js'
 import bcrypt from 'bcrypt'
 import * as uuid from 'uuid'
 import MailService from './mail-service.js'
 import TokenService from './token-service.js'
 import { UserDto } from '../dtos/user-dto.js'
 import { ApiError } from '../exceptions/api-error.js'
+import tokenService from './token-service.js'
+import { UserSchema } from '../models/user-model.js'
 
 class UserService {
   async registration(email: string, password: string) {
@@ -81,6 +83,39 @@ class UserService {
 
     user.isActivated = true
     await user.save()
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError()
+    }
+
+    const userData = tokenService.validateRefreshToken(refreshToken) as UserSchema
+    const tokenFromDb = await TokenService.findToken(refreshToken)
+
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError()
+    }
+
+    const candidate = await UserModel.findOne({
+      where: {
+        id: userData.id,
+      },
+    })
+
+    if (!candidate) {
+      throw ApiError.BadRequest('Пользователь не найден')
+    }
+
+    const userDto = new UserDto(candidate)
+    const tokens = TokenService.generateTokens({ ...userDto })
+
+    await TokenService.saveToken(candidate.id, tokens.refreshToken)
+
+    return {
+      ...tokens,
+      user: userDto,
+    }
   }
 }
 

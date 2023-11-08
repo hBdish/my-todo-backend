@@ -7,11 +7,13 @@ import {
   ActivateRequestParams,
   LoginRequest,
   LogoutRequest,
+  RefreshRequest,
   RegistrationRequest,
 } from './types/user-controllers-types.js'
 import { validationResult } from 'express-validator'
 
 import { ErrorNext } from '../middlewares/types/error-middleware-types.js'
+import { TokenModel } from '../models/token-model.js'
 
 class UserController {
   async registration(
@@ -48,7 +50,9 @@ class UserController {
     try {
       const { password, email } = req.body
       const userData = await UserService.login(email, password)
+
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -58,6 +62,7 @@ class UserController {
   async logout(req: LogoutRequest, res: express.Response, next: ErrorNext) {
     try {
       const { refreshToken } = req.cookies
+
       await UserService.logout(refreshToken)
 
       res.clearCookie('refreshToken')
@@ -79,12 +84,18 @@ class UserController {
     }
   }
 
-  // async refresh(req: express.Request<string>, res: express.Response<string>) {
-  //   try {
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
+  async refresh(req: RefreshRequest, res: express.Response, next: ErrorNext) {
+    try {
+      const { refreshToken } = req.cookies
+      const userData = await UserService.refresh(refreshToken)
+
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+
+      return res.json(userData)
+    } catch (e) {
+      next(e)
+    }
+  }
 
   async getAllUsers(req: express.Request, res: express.Response<UserSchema[]>, next: ErrorNext) {
     try {

@@ -19,3 +19,9 @@ export interface LogoutRequest extends express.Request {
     refreshToken: string
   }
 }
+
+export interface RefreshRequest extends express.Request {
+  cookies: {
+    refreshToken: string
+  }
+}

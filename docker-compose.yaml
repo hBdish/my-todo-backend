@@ -1,15 +1,34 @@
 version: '3.5'
 
 services:
+  auth:
+    build: ./
+    container_name: auth
+    ports:
+      - "6100:6100"
+    environment:
+      - DATEBASE_HOST=db_auth
+    env_file:
+      - .env
+    depends_on:
+      - db_auth
+    networks:
+      - internal_net
+
   db_auth:
     container_name: db_auth
     ports:
       - "6101:6101"
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=root
+    env_file:
+      - .env
     image: postgres:16-alpine
     command:
       - "postgres"
       - "-c"
       - "port=6101"
+    networks:
+      - internal_net
+
+networks:
+  internal_net:
+    driver: bridge

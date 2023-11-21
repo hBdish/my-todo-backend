@@ -9,9 +9,8 @@
     "dev:auth": "nodemon auth/src/main.ts",
     "dev:data": "nodemon data/src/main.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node dist/main",
-    "lint": "npx eslint auth/src",
-    "format": "npx eslint auth/src --fix",
+    "lint": "concurrently 'eslint auth/src' 'eslint data/src'",
+    "format": "concurrently 'eslint auth/src --fix' 'eslint data/src --fix'",
     "prepare": "husky install"
   },
   "keywords": [],

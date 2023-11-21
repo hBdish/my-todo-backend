@@ -5,7 +5,9 @@
   "main": "main.ts",
   "type": "module",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "concurrently 'nodemon auth/src/main.ts' 'nodemon data/src/main.ts'",
+    "dev:auth": "nodemon auth/src/main.ts",
+    "dev:data": "nodemon data/src/main.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/main",
     "lint": "npx eslint auth/src",
@@ -26,6 +28,7 @@
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.9.1",
+    "concurrently": "^8.2.2",
     "eslint": "^8.52.0",
     "husky": "^8.0.0",
     "nodemon": "^3.0.1",

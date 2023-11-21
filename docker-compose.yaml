@@ -19,6 +19,9 @@ services:
     container_name: db_auth
     ports:
       - "6101:6101"
+    environment:
+      - POSTGRES_USER=${DATEBASE_USER}
+      - POSTGRES_PASSWORD=${DATEBASE_PASSWORD}
     env_file:
       - .env
     image: postgres:16-alpine

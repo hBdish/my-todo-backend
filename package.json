@@ -8,8 +8,8 @@
     "dev": "nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/main",
-    "lint": "npx eslint ./src",
-    "format": "npx eslint ./src --fix",
+    "lint": "npx eslint auth/src",
+    "format": "npx eslint auth/src --fix",
     "prepare": "husky install"
   },
   "keywords": [],

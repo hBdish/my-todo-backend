@@ -1,15 +1,14 @@
 import 'dotenv/config'
-import express, { Router } from 'express'
+import express from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { mongoConnection } from './db.js'
 import errorMiddleware from './middlewares/error-middleware.js'
 import authMiddleware from './middlewares/auth-middleware.js'
-import mongoose from 'mongoose'
+import router from './router/index.js'
 
 const PORT = 6200
 const app = express()
-const router = Router()
 
 app.use(express.json())
 app.use(cookieParser())
@@ -31,9 +30,5 @@ const start = async () => {
     console.error('Unable to connect to the database:', error)
   }
 }
-
-router.get('/test', (req, res, next) => {
-  res.json('Hello world!')
-})
 
 start()

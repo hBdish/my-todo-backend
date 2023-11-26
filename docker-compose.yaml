@@ -34,20 +34,16 @@ services:
 
   db_data:
     container_name: db_data
+    image: mongo:7.0.3
+    command: mongod --port ${DATEBASE_PORT_MONGO}
     ports:
       - "6201:6201"
     environment:
-      - POSTGRES_USER=${DATEBASE_USER}
-      - POSTGRES_PASSWORD=${DATEBASE_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${DATEBASE_USER_MONGO}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATEBASE_PASSWORD_MONGO}
+      MONGO_INITDB_DATABASE: db_data
     env_file:
       - .env
-    image: postgres:16-alpine
-    command:
-      - "postgres"
-      - "-c"
-      - "port=6201"
-    networks:
-      - internal_net
 
 networks:
   internal_net:

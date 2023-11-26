@@ -1,6 +1,4 @@
 import jwt from 'jsonwebtoken'
-import { TokenModel } from '../models/relationships-model.js'
-import { UserDtoType } from '../dtos/user-dto.js'
 
 class TokenService {
   validateAccessToken(token: string) {

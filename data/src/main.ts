@@ -2,9 +2,10 @@ import 'dotenv/config'
 import express, { Router } from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import { sequelize } from './db.js'
+import { mongoConnection } from './db.js'
 import errorMiddleware from './middlewares/error-middleware.js'
 import authMiddleware from './middlewares/auth-middleware.js'
+import mongoose from 'mongoose'
 
 const PORT = 6200
 const app = express()
@@ -25,10 +26,7 @@ const start = async () => {
   }
 
   try {
-    await sequelize.authenticate()
-    await sequelize.sync()
-
-    console.log('Connection has been established successfully.')
+    await mongoConnection.then(() => console.log('Connection has been established successfully.'))
   } catch (error) {
     console.error('Unable to connect to the database:', error)
   }

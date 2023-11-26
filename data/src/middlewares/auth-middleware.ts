@@ -1,7 +1,7 @@
 import { ApiError } from '../exceptions/api-error.js'
 import tokenService from '../service/token-service.js'
-import { UserSchema } from '../models/user-model.js'
 import { NextFunction, Request } from 'express'
+import { UserSchema } from '../../../auth/src/models/user-model.js' // TODO переделать
 
 export default function (req: Request, res: unknown, next: NextFunction) {
   try {
@@ -17,7 +17,7 @@ export default function (req: Request, res: unknown, next: NextFunction) {
       return next(ApiError.UnauthorizedError())
     }
 
-    const userData = tokenService.validateAccessToken(accessToken) as UserSchema
+    const userData = tokenService.validateAccessToken(accessToken) as UserSchema // TODO переделать
     if (!userData) {
       return next(ApiError.UnauthorizedError())
     }
